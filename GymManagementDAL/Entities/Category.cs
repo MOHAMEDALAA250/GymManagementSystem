@@ -11,5 +11,13 @@ namespace GymManagementDAL.Entities
         public string CategoryName { get; set; }
 
 
+        #region Relations
+
+        #region Category-sessions
+
+        public ICollection<Session> Sessions { get; set; }
+
+        #endregion
+        #endregion
     }
 }

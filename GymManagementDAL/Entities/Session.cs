@@ -13,5 +13,31 @@ namespace GymManagementDAL.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
+        #region Relations
+
+        #region Category - Session
+
+        public Category Category { get; set; }
+
+        public int CategoryId { get; set; }
+
+        #endregion
+
+        #region Session - trainer
+
+        public Trainer Trainer { get; set; }
+
+        public int TrainerId { get; set; }
+
+        #endregion
+
+        #region Session -  members
+
+        public ICollection<MemberSession> MemberSessions { get; set; }
+
+        #endregion
+
+        #endregion
+
     }
 }
