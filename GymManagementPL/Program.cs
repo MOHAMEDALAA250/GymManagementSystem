@@ -1,3 +1,8 @@
+using GymManagementDAL.Data.Contexts;
+using GymManagementDAL.Repositories.Implementation;
+using GymManagementDAL.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
 namespace GymManagementPL
 {
     public class Program
@@ -9,8 +14,19 @@ namespace GymManagementPL
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddDbContext<GymDbContext>(options =>
+            {
+               // options.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings")["DefualtConnection"]);
+                //options.UseSqlServer(builder.Configuration["ConnectionStrings:DefualtConnection"]); 
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefualtConnection"));
+            });
+
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+
             var app = builder.Build();
 
+            #region Configration Pipeline [Middleware]
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -29,6 +45,8 @@ namespace GymManagementPL
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
+
+            #endregion
 
             app.Run();
         }
