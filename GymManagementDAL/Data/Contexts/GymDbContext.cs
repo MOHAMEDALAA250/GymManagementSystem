@@ -18,6 +18,10 @@ namespace GymManagementDAL.Data.Contexts
 
         }
 
+        public GymDbContext()
+        {
+        }
+
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsbuilder)
         //{
         //    optionsbuilder.UseSqlServer("server=.;database=GymG01DB;trusted_connection=true;trustservercertificate=true;");
