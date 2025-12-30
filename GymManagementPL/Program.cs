@@ -1,4 +1,6 @@
+using GymManagementBLL.Mapping;
 using GymManagementDAL.Data.Contexts;
+using GymManagementDAL.Data.SeedData;
 using GymManagementDAL.Repositories.Implementation;
 using GymManagementDAL.Repositories.Interfaces;
 using GymManagementDAL.UnitOfWork;
@@ -12,21 +14,41 @@ namespace GymManagementPL
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            #region DI Registeration
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<GymDbContext>(options =>
             {
-               // options.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings")["DefualtConnection"]);
+                // options.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings")["DefualtConnection"]);
                 //options.UseSqlServer(builder.Configuration["ConnectionStrings:DefualtConnection"]); 
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefualtConnection"));
             });
 
             // builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitfOfWork));
-            //builder.Services.AddScoped<IPlanRepository, PlanRepository>();
+            //builder.Services.AddScoped<IPlanRepository, PlanRepository>(); 
+
+            builder.Services.AddScoped(typeof(ISessionRepository), typeof(SessionRepository));
+
+
+            builder.Services.AddAutoMapper(X => X.AddProfile(new MappingProfile()));
+            #endregion
 
             var app = builder.Build();
+
+            #region Data Seeding
+
+            using var scope = app.Services.CreateScope();
+
+            var dbContext = scope.ServiceProvider.GetRequiredService<GymDbContext>();
+
+            var pendingMigrations = dbContext.Database.GetPendingMigrations();
+            if (pendingMigrations?.Any() ?? false)
+                dbContext.Database.Migrate();
+
+            GymDbContextSeeding.SeedingData(dbContext);
+            #endregion
 
             #region Configration Pipeline [Middleware]
             // Configure the HTTP request pipeline.
