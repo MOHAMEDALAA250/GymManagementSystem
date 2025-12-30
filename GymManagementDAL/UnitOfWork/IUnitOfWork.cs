@@ -10,7 +10,7 @@ namespace GymManagementDAL.UnitOfWork
 {
     public interface IUnitOfWork
     {
-        
+        ISessionRepository SessionRepository { get; }
         IGenericRepository<TEntity> GetRepository<TEntity>()
             where TEntity : BaseEntity, new();
 
